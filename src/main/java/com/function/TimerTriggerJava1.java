@@ -9,12 +9,12 @@ import com.microsoft.azure.functions.*;
 public class TimerTriggerJava1 {
     @FunctionName("TimerTriggerJava1")
     public void run(
-        @TimerTrigger(name = "timerInfo", schedule = "0 */1 * * * *") String timerInfo,
+        @TimerTrigger(name = "timerInfo", schedule = "0 */10 * * * *") String timerInfo,
         final ExecutionContext context
     ) {
         context.getLogger().info("Java Timer trigger function executed at: " + LocalDateTime.now());
 
-        String apiUrl = "https://<YOUR_FUNCTION_APP_URL>/api/GetDummyWeatherData";  // Replace with your actual function app URL
+        String apiUrl = "https://coupaapicall.azurewebsites.net/api/GetDummyWeatherData";  // Your function app URL with endpoint
 
         try {
             URL url = new URL(apiUrl);
