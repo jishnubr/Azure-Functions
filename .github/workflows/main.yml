@@ -1,80 +1,56 @@
 name: Deploy Java app to Azure Web App
 
-on: [push, pull_request]
+on: 
+  push:
+  pull_request:
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
+      # Cache Maven dependencies
+      - name: Cache Maven dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-maven
 
-            # Cache Maven dependencies
-    - name: Cache Maven dependencies
-      uses: actions/cache@v2
-      with:
-        path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-        restore-keys: ${{ runner.os }}-maven
+      - name: Set up Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: '23'  # Assuming 11 is required since 23 seems too high
+          check-latest: true
+          cache: 'maven'  # Caches dependencies for Maven builds
 
-    - name: Set up Java
-      uses: actions/setup-java@v2
-      with:
-        distribution: 'temurin'
-        java-version: '23'
-        check-latest: true
-        cache: 'maven'  # Caches dependencies for Maven builds
-    - name: Build with Maven
-      run: mvn clean install -q
+      - name: Build with Maven
+        run: mvn clean install -q
 
-    - name: Prepare deployment package
-      run: |
-        cd target/azure-functions  # Go to azure-functions
-        zip -r ../azure-functions-1.0-SNAPSHOT.zip *  # Zip entire azure-functions from within the folder and save it one level up
-    
-    - name: Get package filename
-      id: get-package
-      run: echo "PACKAGE_FILE=target/azure-functions-1.0-SNAPSHOT.zip" >> $GITHUB_ENV  # azure-functions-1.0-SNAPSHOT.zip is our package
-    
+      - name: Prepare deployment package
+        run: |
+          cd target/azure-functions  # Go to azure-functions
+          zip -r ../azure-functions-1.0-SNAPSHOT.zip *  # Zip entire azure-functions from within the folder and save it one level up
 
+      - name: Get package filename
+        id: get-package
+        run: echo "PACKAGE_FILE=target/azure-functions-1.0-SNAPSHOT.zip" >> $GITHUB_ENV  # azure-functions-1.0-SNAPSHOT.zip is our package
 
-    # - name: Copy function.json
-    #   run: |
-    #     mkdir -p target/deploy
-    #     cp -r target/*.jar target/deploy/
-    #     cp -r src/main/resources/function.json target/deploy/
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: 'coupaapiCall'
+          slot-name: 'production'
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: ${{ env.PACKAGE_FILE }}
 
-    # - name: Get package filename
-    #   id: get-package
-    #   run: echo "PACKAGE_FILE=$(ls target/deploy/*.jar)" >> $GITHUB_ENV
+      - name: Ensure all processes are stopped
+        run: |
+          pkill -f java || true
 
-
-    - name: Deploy to Azure Web App
-      uses: azure/webapps-deploy@v2
-      with:
-        app-name: 'coupaapiCall'
-        slot-name: 'production'
-        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-        package: ${{ env.PACKAGE_FILE }}
-
-
-    - name: Ensure all processes are stopped
-      run: |
-        pkill -f java || true
-
-    - name: Clean up temporary files
-      run: rm -rf target/deploy
-
-    # - name: Send Slack notification
-    #   uses: 8398a7/action-slack@v3
-    #   with:
-    #     status: ${{ job.status }}
-    #     fields: repo,message,commit,author,action,eventName,ref,workflow,job,took
-    #   env:
-    #     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-
-    # - name: Summarize deployment logs
-    #   run: tail -n 100 /path/to/deployment/logs/*.log
-
+      - name: Clean up temporary files
+        run: rm -rf target/deploy
