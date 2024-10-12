@@ -6,33 +6,40 @@ import java.io.*;
 import com.microsoft.azure.functions.annotation.*;
 import com.microsoft.azure.functions.*;
 
-/**
- * Azure Functions with Timer trigger.
- */
 public class TimerTriggerJava1 {
-    /**
-     * This function will be invoked periodically according to the specified schedule.
-     */
     @FunctionName("TimerTriggerJava1")
     public void run(
-        @TimerTrigger(name = "timerInfo", schedule = "0 */1 * * * *") String timerInfo,
+        @TimerTrigger(name = "timerInfo", schedule = "0 */10 * * * *") String timerInfo,
         final ExecutionContext context
     ) {
         context.getLogger().info("Java Timer trigger function executed at: " + LocalDateTime.now());
 
+        String apiUrl = "https://<YOUR_FUNCTION_APP_URL>/api/GetDummyWeatherData";  // Replace with your actual function app URL
+
         try {
-            URL url = new URL("http://www.google.com");
+            URL url = new URL(apiUrl);
             HttpURLConnection urlConnect = (HttpURLConnection) url.openConnection();
             urlConnect.setConnectTimeout(10000); // Set timeout
+            urlConnect.setRequestMethod("GET");
             urlConnect.connect();
 
-            if (urlConnect.getResponseCode() == 200) {
-                context.getLogger().info("Internet is available.");
+            int responseCode = urlConnect.getResponseCode();
+            if (responseCode == 200) {
+                BufferedReader in = new BufferedReader(new InputStreamReader(urlConnect.getInputStream()));
+                String inputLine;
+                StringBuilder content = new StringBuilder();
+
+                while ((inputLine = in.readLine()) != null) {
+                    content.append(inputLine);
+                }
+
+                in.close();
+                context.getLogger().info("Dummy weather data: " + content.toString());
             } else {
-                context.getLogger().info("Failed to connect to the internet.");
+                context.getLogger().info("Failed to fetch dummy weather data. Response code: " + responseCode);
             }
         } catch (Exception e) {
-            context.getLogger().severe("Error checking internet connectivity: " + e.getMessage());
+            context.getLogger().severe("Error checking dummy weather API: " + e.getMessage());
         }
     }
 }
