@@ -38,12 +38,12 @@ jobs:
 
 
       - name: List contents of target folder
-        run: du -ah target/azure-functions | sort -rh
+        run: du -ah target/azure-functions/coupaapiCall | sort -rh
         
 
       - name: Get package filename
         id: get-package
-        run: echo "PACKAGE_FILE=target/azure-functions-1.0-SNAPSHOT.zip" >> $GITHUB_ENV  # azure-functions-1.0-SNAPSHOT.zip is our package
+        run: echo "PACKAGE_FILE=target/coupaapiCall/azure-functions-1.0-SNAPSHOT.zip" >> $GITHUB_ENV  # azure-functions-1.0-SNAPSHOT.zip is our package
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
