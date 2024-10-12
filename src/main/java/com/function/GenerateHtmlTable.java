@@ -25,7 +25,7 @@ public class GenerateHtmlTable {
                               "body { background-color: #f8f9fa; }" +
                               "h2 { color: #17a2b8; }" +
                               "table { width: 100%; border: 2px solid " + borderColor + "; }" +
-                              "th { background-color: #343a40; color: " + textColor + "; }" +
+                              "th { background-color: #343a40; color: #ffffff; }" + // Changed to white for better contrast
                               "tr:nth-child(even) { background-color: #e9ecef; }" +
                               "tr:nth-child(odd) { background-color: #f8f9fa; }" +
                               "td { color: " + textColor + "; }" +
@@ -34,7 +34,7 @@ public class GenerateHtmlTable {
                               "<table class='table table-striped'><thead><tr><th>Location</th><th>Temperature</th><th>Humidity</th><th>Wind Speed</th><th>Wind Direction</th><th>Pressure</th><th>Precipitation</th><th>Visibility</th><th>Status</th></tr></thead><tbody>" +
                               "<tr v-for='data in weatherData'><td>{{ data.location }}</td><td>{{ data.temperature }}</td><td>{{ data.humidity }}</td><td>{{ data.wind_speed }}</td><td>{{ data.wind_direction }}</td><td>{{ data.pressure }}</td><td>{{ data.precipitation }}</td><td>{{ data.visibility }}</td><td>{{ data.status }}</td></tr>" +
                               "</tbody></table></div><script>" +
-                              "new Vue({el: '#app', data: {weatherData: " + weatherData + "}});" +
+                              "new Vue({el: '#app', data: {weatherData: [" + weatherData + "]}});" +
                               "</script></body></html>";
 
         context.getLogger().info("Generated HTML table with Vue.js for weather data, with dynamic colors.");
