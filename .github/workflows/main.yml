@@ -31,14 +31,14 @@ jobs:
       - name: Build with Maven
         run: mvn clean install -q
 
-      - name: Prepare deployment package
-        run: |
-          cd target/azure-functions  # Go to azure-functions
-          zip -r ../azure-functions-1.0-SNAPSHOT.zip *  # Zip entire azure-functions from within the folder and save it one level up
+      # - name: Prepare deployment package
+      #   run: |
+      #     cd target/azure-functions  # Go to azure-functions
+      #     zip -r ../azure-functions-1.0-SNAPSHOT.zip *  # Zip entire azure-functions from within the folder and save it one level up
 
 
-          - name: List contents of target folder
-          run: du -ah target | sort -rh
+      - name: List contents of target folder
+        run: du -ah target | sort -rh
         
 
       - name: Get package filename
