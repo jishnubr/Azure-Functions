@@ -16,6 +16,7 @@ public class TimerTriggerJava1 {
 
         String apiUrl = "https://coupaapicall.azurewebsites.net/api/GetDummyWeatherData";  // Your function app URL with endpoint
         String htmlApiUrl = "https://coupaapicall.azurewebsites.net/api/GenerateHtmlTable";  // URL for HTML table function
+        String postHtmlUrl = "https://coupaapicall.azurewebsites.net/api/PostHtmlContent";  // URL to post HTML content
 
         try {
             // Fetch weather data
@@ -62,6 +63,26 @@ public class TimerTriggerJava1 {
                     }
                     htmlIn.close();
                     context.getLogger().info("Generated HTML table: " + htmlContent.toString());
+
+                    // Post HTML content to HostHtmlContent function
+                    URL postHtml = new URL(postHtmlUrl);
+                    HttpURLConnection postConnect = (HttpURLConnection) postHtml.openConnection();
+                    postConnect.setConnectTimeout(10000); // Set timeout
+                    postConnect.setRequestMethod("POST");
+                    postConnect.setRequestProperty("Content-Type", "text/html");
+                    postConnect.setDoOutput(true);
+
+                    try (OutputStream os = postConnect.getOutputStream()) {
+                        byte[] input = htmlContent.toString().getBytes("utf-8");
+                        os.write(input, 0, input.length);
+                    }
+
+                    int postResponseCode = postConnect.getResponseCode();
+                    if (postResponseCode == 200) {
+                        context.getLogger().info("HTML content posted successfully.");
+                    } else {
+                        context.getLogger().info("Failed to post HTML content. Response code: " + postResponseCode);
+                    }
                 } else {
                     context.getLogger().info("Failed to generate HTML table. Response code: " + htmlResponseCode);
                 }
