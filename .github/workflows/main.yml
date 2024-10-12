@@ -10,11 +10,13 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
+
     - name: Set up Java
       uses: actions/setup-java@v2
       with:
         distribution: 'temurin'
-        java-version: 'latest'
+        java-version: '23'
+        check-latest: true
         cache: 'maven'  # Caches dependencies for Maven builds
     - name: Build with Maven
       run: mvn clean install
