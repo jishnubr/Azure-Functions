@@ -45,13 +45,13 @@ jobs:
         id: get-package
         run: echo "PACKAGE_FILE=target/azure-functions-1.0-SNAPSHOT.zip" >> $GITHUB_ENV  # azure-functions-1.0-SNAPSHOT.zip is our package
 
-      # - name: Deploy to Azure Web App
-      #   uses: azure/webapps-deploy@v2
-      #   with:
-      #     app-name: 'azure-functions'
-      #     slot-name: 'production'
-      #     publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-      #     package: ${{ env.PACKAGE_FILE }}
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: 'azure-functions'
+          slot-name: 'production'
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: ${{ env.PACKAGE_FILE }}
 
       - name: Ensure all processes are stopped
         run: |
