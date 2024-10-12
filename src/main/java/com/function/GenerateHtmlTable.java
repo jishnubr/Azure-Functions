@@ -10,8 +10,10 @@ public class GenerateHtmlTable {
         @HttpTrigger(name = "req", methods = {HttpMethod.POST}, authLevel = AuthorizationLevel.ANONYMOUS) HttpRequestMessage<Optional<String>> request,
         final ExecutionContext context) {
 
+        // Get the weather data from the request body
         String weatherData = request.getBody().orElse("[]");  // Default to empty array if no data
 
+        // HTML template with Vue.js integration
         String htmlTemplate = "<!DOCTYPE html><html><head><title>Weather Data</title>" +
                               "<link rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/5.0.0/css/bootstrap.min.css'>" +
                               "<script src='https://cdn.jsdelivr.net/npm/vue@2'></script>" +
