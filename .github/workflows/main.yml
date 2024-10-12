@@ -18,9 +18,18 @@ jobs:
         cache: 'maven'  # Caches dependencies for Maven builds
     - name: Build with Maven
       run: mvn clean install -q
+      
+    - name: Prepare deployment package
+      run: |
+        mkdir -p target/azure-functions
+        cp -r src/main/resources/function.json target/azure-functions/
+        cp -r target/*.jar target/azure-functions/
+        cd target
+        zip -r azure-functions-1.0-SNAPSHOT.zip azure-functions
 
-    - name: List contents of target folder
-      run: ls -lart target
+    - name: Get package filename
+      id: get-package
+      run: echo "PACKAGE_FILE=target/azure-functions-1.0-SNAPSHOT.zip" >> $GITHUB_ENV
 
 
     # - name: Copy function.json
@@ -34,13 +43,13 @@ jobs:
     #   run: echo "PACKAGE_FILE=$(ls target/deploy/*.jar)" >> $GITHUB_ENV
 
 
-    # - name: Deploy to Azure Web App
-    #   uses: azure/webapps-deploy@v2
-    #   with:
-    #     app-name: 'coupaapiCall'
-    #     slot-name: 'production'
-    #     publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-    #     package: ${{ env.PACKAGE_FILE }}
+    - name: Deploy to Azure Web App
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: 'coupaapiCall'
+        slot-name: 'production'
+        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+        package: ${{ env.PACKAGE_FILE }}
 
 
     - name: Ensure all processes are stopped
