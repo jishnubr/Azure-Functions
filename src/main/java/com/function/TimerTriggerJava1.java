@@ -14,12 +14,12 @@ public class TimerTriggerJava1 {
     ) {
         context.getLogger().info("Java Timer trigger function executed at: " + LocalDateTime.now());
 
-        String apiUrl = "https://coupaapicall.azurewebsites.net/api/GetDummyWeatherData";  // Your function app URL with endpoint
+        String apiUrl = "https://coupaapicall.azurewebsites.net/api/FetchFlightInfo";  // Your function app URL with endpoint
         String htmlApiUrl = "https://coupaapicall.azurewebsites.net/api/GenerateHtmlTable";  // URL for HTML table function
         String postHtmlUrl = "https://coupaapicall.azurewebsites.net/api/PostHtmlContent";  // URL to post HTML content
 
         try {
-            // Fetch weather data
+            // Fetch flight data
             URL url = new URL(apiUrl);
             HttpURLConnection urlConnect = (HttpURLConnection) url.openConnection();
             urlConnect.setConnectTimeout(10000); // Set timeout
@@ -36,10 +36,10 @@ public class TimerTriggerJava1 {
                     content.append(inputLine);
                 }
                 in.close();
-                context.getLogger().info("Dummy weather data: " + content.toString());
+                context.getLogger().info("Dummy flight data: " + content.toString());
 
                 // Send data to HTML table function
-                String weatherData = content.toString();
+                String flightData = content.toString();
                 URL htmlUrl = new URL(htmlApiUrl);
                 HttpURLConnection htmlConnect = (HttpURLConnection) htmlUrl.openConnection();
                 htmlConnect.setConnectTimeout(10000); // Set timeout
@@ -48,7 +48,7 @@ public class TimerTriggerJava1 {
                 htmlConnect.setDoOutput(true);
 
                 try (OutputStream os = htmlConnect.getOutputStream()) {
-                    byte[] input = weatherData.getBytes("utf-8");
+                    byte[] input = flightData.getBytes("utf-8");
                     os.write(input, 0, input.length);
                 }
 
@@ -87,10 +87,10 @@ public class TimerTriggerJava1 {
                     context.getLogger().info("Failed to generate HTML table. Response code: " + htmlResponseCode);
                 }
             } else {
-                context.getLogger().info("Failed to fetch dummy weather data. Response code: " + responseCode);
+                context.getLogger().info("Failed to fetch dummy flight data. Response code: " + responseCode);
             }
         } catch (Exception e) {
-            context.getLogger().severe("Error processing weather data: " + e.getMessage());
+            context.getLogger().severe("Error processing flight data: " + e.getMessage());
         }
     }
 }
