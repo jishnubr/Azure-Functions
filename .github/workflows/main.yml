@@ -31,11 +31,19 @@ jobs:
       - name: Build with Maven
         run: mvn clean install -q
 
+      # - name: Prepare deployment package
+      #   run: |
+      #     cd target/azure-functions/coupaapiCall  # Go to azure-functions the coupaapiCall
+      #     zip -r ../azure-functions-1.0-SNAPSHOT.zip *  # Zip entire azure-functions from within the folder and save it one level up
+
+
       - name: Prepare deployment package
         run: |
-          cd target/azure-functions/coupaapiCall  # Go to azure-functions the coupaapiCall
-          zip -r ../azure-functions-1.0-SNAPSHOT.zip *  # Zip entire azure-functions from within the folder and save it one level up
-
+            # mkdir -p target/coupaapiCall  # Ensure the target directory exists
+            cp -r target/azure-functions/* target/coupaapiCall/  # Copy all contents to target/coupaapiCall
+            cd target/coupaapiCall  # Go to target/coupaapiCall
+            zip -r ../azure-functions-1.0-SNAPSHOT.zip *  # Zip entire contents and save it one level up
+        
 
       # - name: List contents of target folder
       #   run: du -ah target/azure-functions/coupaapiCall | sort -rh
