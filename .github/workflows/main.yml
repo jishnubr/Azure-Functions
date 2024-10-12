@@ -9,6 +9,16 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
+
+
+            # Cache Maven dependencies
+    - name: Cache Maven dependencies
+      uses: actions/cache@v2
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-maven
+
     - name: Set up Java
       uses: actions/setup-java@v2
       with:
