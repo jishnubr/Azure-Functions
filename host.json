@@ -1,0 +1,17 @@
+{
+  "version": "2.0",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "[4.*, 5.0.0)"
+  },
+  "concurrency": {
+    "dynamicConcurrencyEnabled": true,
+    "snapshotPersistenceEnabled": true
+  },
+  "extensions": {
+    "timers": {
+      "maxPollingInterval": "00:01:00",
+      "schedule": "0 */1 * * * *"
+    }
+  }
+}
