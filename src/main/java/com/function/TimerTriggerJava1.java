@@ -12,7 +12,7 @@ public class TimerTriggerJava1 {
         @TimerTrigger(name = "timerInfo", schedule = "0 */1 * * * *") String timerInfo,
         final ExecutionContext context
     ) {
-        context.getLogger().info("Java Timer trigger function executed at: " + LocalDateTime.now());
+        context.getLogger().info("Java Timer trigger function started at: " + LocalDateTime.now());
 
         String[] apiUrls = {
             "https://coupaapicall.azurewebsites.net/api/FetchFlightInfo",  // Flight info URL
@@ -24,13 +24,15 @@ public class TimerTriggerJava1 {
         for (String apiUrl : apiUrls) {
             try {
                 // Fetch data from API
+                context.getLogger().info("Fetching data from: " + apiUrl);
                 URL url = new URL(apiUrl);
                 HttpURLConnection urlConnect = (HttpURLConnection) url.openConnection();
                 urlConnect.setConnectTimeout(10000); // Set timeout
                 urlConnect.setRequestMethod("GET");
                 urlConnect.connect();
-
                 int responseCode = urlConnect.getResponseCode();
+                context.getLogger().info("Response code from " + apiUrl + ": " + responseCode);
+
                 if (responseCode == 200) {
                     BufferedReader in = new BufferedReader(new InputStreamReader(urlConnect.getInputStream()));
                     String inputLine;
@@ -45,6 +47,7 @@ public class TimerTriggerJava1 {
                     // Send data to HTML table function
                     String data = content.toString();
                     URL htmlUrl = new URL(htmlApiUrl);
+                    context.getLogger().info("Sending data to HTML table function: " + htmlApiUrl);
                     HttpURLConnection htmlConnect = (HttpURLConnection) htmlUrl.openConnection();
                     htmlConnect.setConnectTimeout(10000); // Set timeout
                     htmlConnect.setRequestMethod("POST");
@@ -57,6 +60,8 @@ public class TimerTriggerJava1 {
                     }
 
                     int htmlResponseCode = htmlConnect.getResponseCode();
+                    context.getLogger().info("Response code from HTML table function: " + htmlResponseCode);
+
                     if (htmlResponseCode == 200) {
                         BufferedReader htmlIn = new BufferedReader(new InputStreamReader(htmlConnect.getInputStream()));
                         StringBuilder htmlContent = new StringBuilder();
@@ -70,6 +75,7 @@ public class TimerTriggerJava1 {
 
                         // Post HTML content to HostHtmlContent function
                         URL postHtml = new URL(postHtmlUrl);
+                        context.getLogger().info("Posting HTML content to: " + postHtmlUrl);
                         HttpURLConnection postConnect = (HttpURLConnection) postHtml.openConnection();
                         postConnect.setConnectTimeout(10000); // Set timeout
                         postConnect.setRequestMethod("POST");
@@ -82,6 +88,8 @@ public class TimerTriggerJava1 {
                         }
 
                         int postResponseCode = postConnect.getResponseCode();
+                        context.getLogger().info("Response code from posting HTML content: " + postResponseCode);
+
                         if (postResponseCode == 200) {
                             context.getLogger().info("HTML content posted successfully.");
                         } else {
@@ -97,5 +105,6 @@ public class TimerTriggerJava1 {
                 context.getLogger().severe("Error processing data: " + e.getMessage());
             }
         }
+        context.getLogger().info("Java Timer trigger function completed at: " + LocalDateTime.now());
     }
 }
