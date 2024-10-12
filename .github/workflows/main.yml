@@ -37,8 +37,8 @@ jobs:
           zip -r ../azure-functions-1.0-SNAPSHOT.zip *  # Zip entire azure-functions from within the folder and save it one level up
 
 
-      - name: List contents of target folder
-        run: du -ah target/azure-functions/coupaapiCall | sort -rh
+      # - name: List contents of target folder
+      #   run: du -ah target/azure-functions/coupaapiCall | sort -rh
         
 
       - name: Get package filename
