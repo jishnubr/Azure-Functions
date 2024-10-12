@@ -65,6 +65,6 @@ jobs:
     #   env:
     #     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
-    - name: Summarize deployment logs
-      run: tail -n 100 /path/to/deployment/logs/*.log
+    # - name: Summarize deployment logs
+    #   run: tail -n 100 /path/to/deployment/logs/*.log
 
