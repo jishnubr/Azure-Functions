@@ -19,23 +19,45 @@ jobs:
     - name: Build with Maven
       run: mvn clean install -q
 
+    - name: List contents of target folder
+      run: ls -lart target
 
 
-    - name: Copy function.json
+    # - name: Copy function.json
+    #   run: |
+    #     mkdir -p target/deploy
+    #     cp -r target/*.jar target/deploy/
+    #     cp -r src/main/resources/function.json target/deploy/
+
+    # - name: Get package filename
+    #   id: get-package
+    #   run: echo "PACKAGE_FILE=$(ls target/deploy/*.jar)" >> $GITHUB_ENV
+
+
+    # - name: Deploy to Azure Web App
+    #   uses: azure/webapps-deploy@v2
+    #   with:
+    #     app-name: 'coupaapiCall'
+    #     slot-name: 'production'
+    #     publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+    #     package: ${{ env.PACKAGE_FILE }}
+
+
+    - name: Ensure all processes are stopped
       run: |
-        mkdir -p target/deploy
-        cp -r target/*.jar target/deploy/
-        cp -r src/main/resources/function.json target/deploy/
+        pkill -f java || true
 
-    - name: Get package filename
-      id: get-package
-      run: echo "PACKAGE_FILE=$(ls target/deploy/*.jar)" >> $GITHUB_ENV
+    - name: Clean up temporary files
+      run: rm -rf target/deploy
 
-
-    - name: Deploy to Azure Web App
-      uses: azure/webapps-deploy@v2
+    - name: Send Slack notification
+      uses: 8398a7/action-slack@v3
       with:
-        app-name: 'coupaapiCall'
-        slot-name: 'production'
-        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-        package: ${{ env.PACKAGE_FILE }}
+        status: ${{ job.status }}
+        fields: repo,message,commit,author,action,eventName,ref,workflow,job,took
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+    - name: Summarize deployment logs
+      run: tail -n 100 /path/to/deployment/logs/*.log
+
