@@ -20,9 +20,17 @@ jobs:
       run: mvn clean install -q
 
 
-    - name: Get JAR filename
-      id: get-jar
-      run: echo "JAR_FILE=$(ls target/*.jar)" >> $GITHUB_ENV
+
+    - name: Copy function.json
+      run: |
+        mkdir -p target/deploy
+        cp -r target/*.jar target/deploy/
+        cp -r src/main/resources/function.json target/deploy/
+
+    - name: Get package filename
+      id: get-package
+      run: echo "PACKAGE_FILE=$(ls target/deploy/*.jar)" >> $GITHUB_ENV
+
 
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v2
@@ -30,4 +38,4 @@ jobs:
         app-name: 'coupaapiCall'
         slot-name: 'production'
         publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-        package: ${{ env.JAR_FILE }}
+        package: ${{ env.PACKAGE_FILE }}
