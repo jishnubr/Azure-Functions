@@ -36,7 +36,7 @@ public class TimerTriggerJava1 {
                     content.append(inputLine);
                 }
                 in.close();
-                context.getLogger().info("Dummy flight data: " + content.toString());
+                context.getLogger().info("Fetched flight data: " + content.toString());
 
                 // Send data to HTML table function
                 String flightData = content.toString();
@@ -87,7 +87,7 @@ public class TimerTriggerJava1 {
                     context.getLogger().info("Failed to generate HTML table. Response code: " + htmlResponseCode);
                 }
             } else {
-                context.getLogger().info("Failed to fetch dummy flight data. Response code: " + responseCode);
+                context.getLogger().info("Failed to fetch flight data. Response code: " + responseCode);
             }
         } catch (Exception e) {
             context.getLogger().severe("Error processing flight data: " + e.getMessage());
