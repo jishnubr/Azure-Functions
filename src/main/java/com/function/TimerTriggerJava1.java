@@ -35,6 +35,9 @@ public class TimerTriggerJava1 {
 
                 in.close();
                 context.getLogger().info("Dummy weather data: " + content.toString());
+                
+                // Logic to send data to GenerateHtmlTable function or process further
+                // For this example, simply logging the data
             } else {
                 context.getLogger().info("Failed to fetch dummy weather data. Response code: " + responseCode);
             }
