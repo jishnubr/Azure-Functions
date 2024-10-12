@@ -3,6 +3,7 @@ package com.function;
 import com.microsoft.azure.functions.annotation.*;
 import com.microsoft.azure.functions.*;
 import java.util.Optional;
+import java.util.Random;
 
 public class GenerateHtmlTable {
     @FunctionName("GenerateHtmlTable")
@@ -10,20 +11,24 @@ public class GenerateHtmlTable {
         @HttpTrigger(name = "req", methods = {HttpMethod.POST}, authLevel = AuthorizationLevel.ANONYMOUS) HttpRequestMessage<Optional<String>> request,
         final ExecutionContext context) {
 
-        // Get the weather data from the request body
         String weatherData = request.getBody().orElse("[]");  // Default to empty array if no data
 
-        // HTML template with Vue.js integration
+        // Random color generation
+        Random rand = new Random();
+        String textColor = String.format("#%06x", rand.nextInt(0xffffff + 1));
+        String borderColor = String.format("#%06x", rand.nextInt(0xffffff + 1));
+
         String htmlTemplate = "<!DOCTYPE html><html><head><title>Weather Data</title>" +
                               "<link rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/5.0.0/css/bootstrap.min.css'>" +
                               "<script src='https://cdn.jsdelivr.net/npm/vue@2'></script>" +
                               "<style>" +
                               "body { background-color: #f8f9fa; }" +
                               "h2 { color: #17a2b8; }" +
-                              "table { width: 100%; }" +
-                              "th { background-color: #343a40; color: #fff; }" +
+                              "table { width: 100%; border: 2px solid " + borderColor + "; }" +
+                              "th { background-color: #343a40; color: " + textColor + "; }" +
                               "tr:nth-child(even) { background-color: #e9ecef; }" +
                               "tr:nth-child(odd) { background-color: #f8f9fa; }" +
+                              "td { color: " + textColor + "; }" +
                               "</style>" +
                               "</head><body><div id='app' class='container'><h2>Weather Data</h2>" +
                               "<table class='table table-striped'><thead><tr><th>Location</th><th>Temperature</th><th>Humidity</th><th>Wind Speed</th><th>Wind Direction</th><th>Pressure</th><th>Precipitation</th><th>Visibility</th><th>Status</th></tr></thead><tbody>" +
@@ -32,7 +37,7 @@ public class GenerateHtmlTable {
                               "new Vue({el: '#app', data: {weatherData: " + weatherData + "}});" +
                               "</script></body></html>";
 
-        context.getLogger().info("Generated HTML table with Vue.js for weather data.");
+        context.getLogger().info("Generated HTML table with Vue.js for weather data, with dynamic colors.");
 
         return request.createResponseBuilder(HttpStatus.OK)
                       .header("Content-Type", "text/html")
