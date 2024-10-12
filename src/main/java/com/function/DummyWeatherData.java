@@ -2,7 +2,7 @@ package com.function;
 
 import com.microsoft.azure.functions.annotation.*;
 import com.microsoft.azure.functions.*;
-
+import java.util.Optional;
 public class DummyWeatherData {
     @FunctionName("GetDummyWeatherData")
     public HttpResponseMessage get(
