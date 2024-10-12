@@ -17,7 +17,7 @@ jobs:
         check-latest: true
         cache: 'maven'  # Caches dependencies for Maven builds
     - name: Build with Maven
-      run: mvn clean install
+      run: mvn clean install -q
 
 
     - name: Get JAR filename
