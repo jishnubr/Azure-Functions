@@ -57,5 +57,5 @@ jobs:
         run: |
           pkill -f java || true
 
-      - name: Clean up temporary files
-        run: rm -rf target/*
+      - name: Clean up deploy files
+        run: rm -rf target/deploy
