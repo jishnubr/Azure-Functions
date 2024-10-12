@@ -18,18 +18,16 @@ jobs:
         cache: 'maven'  # Caches dependencies for Maven builds
     - name: Build with Maven
       run: mvn clean install -q
-      
+
     - name: Prepare deployment package
       run: |
-        mkdir -p target/azure-functions
-        cp -r src/main/resources/function.json target/azure-functions/
-        cp -r target/*.jar target/azure-functions/
-        cd target
-        zip -r azure-functions-1.0-SNAPSHOT.zip azure-functions
-
+        cd target/azure-functions  # Go to azure-functions
+        zip -r ../azure-functions-1.0-SNAPSHOT.zip *  # Zip entire azure-functions from within the folder and save it one level up
+    
     - name: Get package filename
       id: get-package
-      run: echo "PACKAGE_FILE=target/azure-functions-1.0-SNAPSHOT.zip" >> $GITHUB_ENV
+      run: echo "PACKAGE_FILE=target/azure-functions-1.0-SNAPSHOT.zip" >> $GITHUB_ENV  # azure-functions-1.0-SNAPSHOT.zip is our package
+    
 
 
     # - name: Copy function.json
