@@ -102,7 +102,7 @@ public class TimerTriggerJava1 {
                     context.getLogger().info("Failed to fetch data. Response code: " + responseCode);
                 }
             } catch (Exception e) {
-                context.getLogger().severe("Error processing data: " + e.getMessage()); 
+                context.getLogger().severe("Error processing data: " + e.getMessage());
             }
         }
         context.getLogger().info("Java Timer trigger function completed at: " + LocalDateTime.now());
