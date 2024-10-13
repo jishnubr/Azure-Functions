@@ -37,7 +37,16 @@ public class GenerateHtmlTable {
                     JSONObject obj = dataArray.getJSONObject(i);
                     tableRows.append("<tr>");
                     for (String key : firstObj.keySet()) {
-                        tableRows.append("<td>").append(String.valueOf(obj.get(key))).append("</td>");
+                        Object value = obj.opt(key);
+                        if (value == null) {
+                            tableRows.append("<td>").append("N/A").append("</td>");
+                        } else if (value instanceof String) {
+                            tableRows.append("<td>").append((String) value).append("</td>");
+                        } else if (value instanceof Number) {
+                            tableRows.append("<td>").append(((Number) value).toString()).append("</td>");
+                        } else {
+                            tableRows.append("<td>").append(String.valueOf(value)).append("</td>");
+                        }
                     }
                     tableRows.append("</tr>");
                 }
