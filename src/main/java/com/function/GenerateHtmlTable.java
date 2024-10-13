@@ -24,31 +24,50 @@ public class GenerateHtmlTable {
             String textColor = String.format("#%06x", rand.nextInt(0xffffff + 1));
             String borderColor = String.format("#%06x", rand.nextInt(0xffffff + 1));
 
-            StringBuilder tableHeaders = new StringBuilder();
-            StringBuilder tableRows = new StringBuilder();
+            StringBuilder flightTableHeaders = new StringBuilder();
+            StringBuilder flightTableRows = new StringBuilder();
+            StringBuilder weatherTableHeaders = new StringBuilder();
+            StringBuilder weatherTableRows = new StringBuilder();
 
-            if (dataArray.length() > 0) {
-                JSONObject firstObj = dataArray.getJSONObject(0);
-                for (String key : firstObj.keySet()) {
-                    tableHeaders.append("<th>").append(capitalize(key)).append("</th>");
-                }
+            boolean hasFlightData = false;
+            boolean hasWeatherData = false;
 
-                for (int i = 0; i < dataArray.length(); i++) {
-                    JSONObject obj = dataArray.getJSONObject(i);
-                    tableRows.append("<tr>");
-                    for (String key : firstObj.keySet()) {
+            for (int i = 0; i < dataArray.length(); i++) {
+                JSONObject obj = dataArray.getJSONObject(i);
+                if (obj.has("flight")) {
+                    if (!hasFlightData) {
+                        flightTableHeaders.append("<th>Departuretime</th><th>Flight</th><th>Arrival</th><th>Arrivaltime</th><th>Departure</th><th>Status</th>");
+                        hasFlightData = true;
+                    }
+                    flightTableRows.append("<tr>");
+                    flightTableRows.append("<td>").append(obj.optString("departureTime", "N/A")).append("</td>");
+                    flightTableRows.append("<td>").append(obj.optString("flight", "N/A")).append("</td>");
+                    flightTableRows.append("<td>").append(obj.optString("arrival", "N/A")).append("</td>");
+                    flightTableRows.append("<td>").append(obj.optString("arrivalTime", "N/A")).append("</td>");
+                    flightTableRows.append("<td>").append(obj.optString("departure", "N/A")).append("</td>");
+                    flightTableRows.append("<td>").append(obj.optString("status", "N/A")).append("</td>");
+                    flightTableRows.append("</tr>");
+                } else {
+                    if (!hasWeatherData) {
+                        for (String key : obj.keySet()) {
+                            weatherTableHeaders.append("<th>").append(capitalize(key)).append("</th>");
+                        }
+                        hasWeatherData = true;
+                    }
+                    weatherTableRows.append("<tr>");
+                    for (String key : obj.keySet()) {
                         Object value = obj.opt(key);
                         if (value == null) {
-                            tableRows.append("<td>").append("N/A").append("</td>");
+                            weatherTableRows.append("<td>").append("N/A").append("</td>");
                         } else if (value instanceof String) {
-                            tableRows.append("<td>").append((String) value).append("</td>");
+                            weatherTableRows.append("<td>").append((String) value).append("</td>");
                         } else if (value instanceof Number) {
-                            tableRows.append("<td>").append(((Number) value).toString()).append("</td>");
+                            weatherTableRows.append("<td>").append(((Number) value).toString()).append("</td>");
                         } else {
-                            tableRows.append("<td>").append(String.valueOf(value)).append("</td>");
+                            weatherTableRows.append("<td>").append(String.valueOf(value)).append("</td>");
                         }
                     }
-                    tableRows.append("</tr>");
+                    weatherTableRows.append("</tr>");
                 }
             }
 
@@ -64,22 +83,26 @@ public class GenerateHtmlTable {
                                   "tr:nth-child(odd) { background-color: #f8f9fa; }" +
                                   "td { color: " + textColor + "; }" +
                                   "</style>" +
-                                  "</head><body><div id='app' class='container'><h2>Data Information</h2>" +
-                                  "<table class='table table-striped'><thead><tr>" + tableHeaders.toString() + "</tr></thead><tbody>" +
-                                  tableRows.toString() + "</tbody></table></div><script>" +
+                                  "</head><body><div id='app' class='container'>" +
+                                  "<h2>Flight Information</h2>" +
+                                  "<table class='table table-striped'><thead><tr>" + flightTableHeaders.toString() + "</tr></thead><tbody>" +
+                                  flightTableRows.toString() + "</tbody></table>" +
+                                  "<h2>Weather Information</h2>" +
+                                  "<table class='table table-striped'><thead><tr>" + weatherTableHeaders.toString() + "</tr></thead><tbody>" +
+                                  weatherTableRows.toString() + "</tbody></table></div><script>" +
                                   "new Vue({el: '#app', data: {dataArray: " + jsonData + "}});" +
                                   "</script></body></html>";
 
-            context.getLogger().info("Generated HTML table with Vue.js for dynamic data, with dynamic colors.");
+            context.getLogger().info("Generated HTML tables with Vue.js for dynamic data, with dynamic colors.");
 
             return request.createResponseBuilder(HttpStatus.OK)
                           .header("Content-Type", "text/html")
                           .body(htmlTemplate)
                           .build();
         } catch (Exception e) {
-            context.getLogger().severe("Error generating HTML table: " + e.getMessage());
+            context.getLogger().severe("Error generating HTML tables: " + e.getMessage());
             return request.createResponseBuilder(HttpStatus.INTERNAL_SERVER_ERROR)
-                          .body("Failed to generate HTML table")
+                          .body("Failed to generate HTML tables")
                           .build();
         }
     }
