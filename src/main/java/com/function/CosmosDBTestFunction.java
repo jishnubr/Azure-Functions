@@ -5,7 +5,7 @@ import com.microsoft.azure.functions.*;
 
 import java.util.Optional;
 import java.util.logging.Logger;
-
+import com.function.*;
 public class CosmosDBTestFunction {
 
     @FunctionName("CosmosDBTestFunction")
