@@ -12,7 +12,7 @@ import org.json.JSONObject;
 public class TimerTriggerJava1 {
     @FunctionName("TimerTriggerJava1")
     public void run(
-        @TimerTrigger(name = "timerInfo", schedule = "0 */1 * * * *") String timerInfo,
+        @TimerTrigger(name = "timerInfo", schedule = "0 */10 * * * *") String timerInfo,
         final ExecutionContext context
     ) {
         context.getLogger().info("Java Timer trigger function started at: " + LocalDateTime.now());
