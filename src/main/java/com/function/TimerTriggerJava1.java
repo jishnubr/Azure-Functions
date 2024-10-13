@@ -47,7 +47,7 @@ public class TimerTriggerJava1 {
                     // Send data to HTML table function
                     String data = content.toString();
                     URL htmlUrl = new URL(htmlApiUrl);
-                    context.getLogger().info("Sending data to HTML table function: " + htmlApiUrl);
+                    context.getLogger().info("Sending data to HTML table function: " + htmlUrl);
                     HttpURLConnection htmlConnect = (HttpURLConnection) htmlUrl.openConnection();
                     htmlConnect.setConnectTimeout(10000); // Set timeout
                     htmlConnect.setRequestMethod("POST");
