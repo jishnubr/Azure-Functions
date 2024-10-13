@@ -2,6 +2,8 @@ package com.function;
 
 import com.microsoft.azure.functions.annotation.*;
 import com.microsoft.azure.functions.*;
+
+import java.util.Optional;
 import java.util.logging.Logger;
 
 public class CosmosDBTestFunction {
