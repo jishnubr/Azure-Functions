@@ -37,7 +37,7 @@ public class GenerateHtmlTable {
                     JSONObject obj = dataArray.getJSONObject(i);
                     tableRows.append("<tr>");
                     for (String key : firstObj.keySet()) {
-                        tableRows.append("<td>").append(obj.getString(key)).append("</td>");
+                        tableRows.append("<td>").append(String.valueOf(obj.get(key))).append("</td>");
                     }
                     tableRows.append("</tr>");
                 }
