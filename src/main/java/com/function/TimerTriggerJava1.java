@@ -44,8 +44,15 @@ public class TimerTriggerJava1 {
                     in.close();
                     context.getLogger().info("Fetched data: " + content.toString());
 
+                    // Ensure the data is in JSON array format
+                    String dataArray;
+                    if (apiUrl.contains("GetDummyWeatherData")) {
+                        dataArray = "[" + content.toString() + "]";
+                    } else {
+                        dataArray = content.toString();
+                    }
+
                     // Send data to HTML table function
-                    String data = content.toString();
                     URL htmlUrl = new URL(htmlApiUrl);
                     context.getLogger().info("Sending data to HTML table function: " + htmlUrl);
                     HttpURLConnection htmlConnect = (HttpURLConnection) htmlUrl.openConnection();
@@ -55,7 +62,7 @@ public class TimerTriggerJava1 {
                     htmlConnect.setDoOutput(true);
 
                     try (OutputStream os = htmlConnect.getOutputStream()) {
-                        byte[] input = data.getBytes("utf-8");
+                        byte[] input = dataArray.getBytes("utf-8");
                         os.write(input, 0, input.length);
                     }
 
