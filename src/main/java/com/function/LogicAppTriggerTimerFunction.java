@@ -13,7 +13,7 @@ public class LogicAppTriggerTimerFunction {
 
     @FunctionName("LogicAppTriggerTimerFunction")
     public void run(
-        @TimerTrigger(name = "timerInfo", schedule = "0 */5 * * * *") String timerInfo, // Triggers every 5 minutes
+        @TimerTrigger(name = "timerInfo", schedule = "0 */1 * * * *") String timerInfo, // Triggers every 5 minutes
         final ExecutionContext context) {
 
         Logger logger = context.getLogger();
